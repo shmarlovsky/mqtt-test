@@ -14,9 +14,9 @@ import (
 )
 
 const (
-	SENSORS_TOPIC  = "/sensors/#"
-	TEMP_TOPIC     = "/sensors/temp"
-	HUMIDITY_TOPIC = "/sensors/hum"
+	SENSORS_TOPIC  = "sensors/#"
+	TEMP_TOPIC     = "sensors/temp"
+	HUMIDITY_TOPIC = "sensors/hum"
 	QOS_0          = 0
 	QOS_1          = 1
 	SERVERADDRESS  = "tcp://localhost:1883"
@@ -76,7 +76,7 @@ func clientOptins(clientID string) *mqtt.ClientOptions {
 
 		// Establish the subscription - doing this here means that it will happen every time a connection is established
 		// (useful if opts.CleanSession is TRUE or the broker does not reliably store session data)
-		t := c.Subscribe(TEMP_TOPIC, QOS_0, messageHandler)
+		t := c.Subscribe(SENSORS_TOPIC, QOS_0, messageHandler)
 		// the connection handler is called in a goroutine so blocking here would hot cause an issue. However as blocking
 		// in other handlers does cause problems its best to just assume we should not block
 		go func() {

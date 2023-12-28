@@ -13,8 +13,8 @@ import (
 )
 
 const (
-	TEMP_TOPIC      = "/sensors/temp"
-	HUMIDITY_TOPIC  = "/sensors/hum"
+	TEMP_TOPIC      = "sensors/temp"
+	HUMIDITY_TOPIC  = "sensors/hum"
 	QOS_0           = 0
 	QOS_1           = 1
 	SERVERADDRESS   = "tcp://localhost:1883"
@@ -110,17 +110,30 @@ func main() {
 			select {
 			case <-time.After(NOTIFY_INTERVAL):
 				count += 1
-				msg := sensor.Temperature()
 
+				retained := false
+				msg := sensor.Temperature()
 				if WRITETOLOG {
 					fmt.Printf("sending message: %s\n", msg)
 				}
-				retained := false
 				t := client.Publish(TEMP_TOPIC, QOS_0, retained, msg)
 				// Handle the token in a go routine so this loop keeps sending messages regardless of delivery status
 				go func() {
 					_ = t.Wait() // Can also use '<-t.Done()' in releases > 1.2.0
 					if err := t.Error(); err != nil {
+						fmt.Printf("ERROR PUBLISHING: %s\n", err)
+					}
+				}()
+
+				msg = sensor.Humidity()
+				if WRITETOLOG {
+					fmt.Printf("sending message: %s\n", msg)
+				}
+				t2 := client.Publish(HUMIDITY_TOPIC, QOS_0, retained, msg)
+				// t2 := client.Publish(TEMP_TOPIC, QOS_0, retained, msg)
+				go func() {
+					_ = t2.Wait() // Can also use '<-t.Done()' in releases > 1.2.0
+					if err := t2.Error(); err != nil {
 						fmt.Printf("ERROR PUBLISHING: %s\n", err)
 					}
 				}()
