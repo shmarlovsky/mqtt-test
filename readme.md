@@ -1,13 +1,19 @@
-Create test mqtt client with this behavior:
-- client sends current temperature (random from interval) every N seconds
-= in parallel client listen to incoming "commands" to send some additional data
-- another client is kinda controller, gets data, sends commands
-- local mosquitto broker
-- depending on time, go and python clients
+MQTT:
+- [mqtt.org](https://mqtt.org)  
+- [hivemq.com](https://www.hivemq.com)
+- [Video tutorial with theory](https://www.youtube.com/playlist?list=PLRkdoPznE1EMXLW6XoYLGd4uUaB6wB0wd)
 
+Soft:
+Most commonly used libraries are part of [Eclipse Paho](https://eclipse.dev/paho/index.php?page=downloads.php) project
+- [Clients](https://eclipse.dev/paho/index.php?page=downloads.php)
+- [Broker](https://mosquitto.org/)
 
-Mosquitto and it's docker:
-https://mosquitto.org/download/
-https://hub.docker.com/_/eclipse-mosquitto
-`docker pull eclipse-mosquitto`
-`docker run -it -p 1883:1883 -p 9001:9001 -v mosquitto.conf:/mosquitto/config/mosquitto.conf -v /mosquitto/data -v /mosquitto/log eclipse-mosquitto`
+Repo contains 2 test clients (publisher and subscriber) written with Go.  
+Publisher (Sensor) is a mock of Temperature and Humidity sensor which periodically sends sensor data to broker.  
+Subscriber (Controller) is a mock of some controlling device.
+
+Mosquitto is run from [docker container](https://hub.docker.com/_/eclipse-mosquitto)  
+- To pull image: `docker pull eclipse-mosquitto`
+- To create and run container: `start_mosquitto.sh`
+- To run existing container: `docker start -a mosquitto`  
+
